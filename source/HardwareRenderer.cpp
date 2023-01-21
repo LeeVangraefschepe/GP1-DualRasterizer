@@ -1,13 +1,15 @@
 #include "pch.h"
-#include "Renderer.h"
+#include "HardwareRenderer.h"
 #include <future>
 
 #define DEBUG
 
 namespace dae {
 
-	Renderer::Renderer(SDL_Window* pWindow, Camera* pCamera) :
+	HardwareRenderer::HardwareRenderer(SDL_Window* pWindow, std::vector<GlobalMesh*>& pGlobalMeshes, Camera* pCamera, CullMode* pCullMode) :
 		m_pWindow(pWindow),
+		m_pCullMode(pCullMode),
+		m_pGlobalMeshes(pGlobalMeshes),
 		m_pCamera(pCamera)
 	{
 		//Initialize
@@ -47,7 +49,7 @@ namespace dae {
 		m_SamplerDesc.MaxAnisotropy = 16;
 	}
 
-	Renderer::~Renderer()
+	HardwareRenderer::~HardwareRenderer()
 	{
 		if (m_pRenderTargetView)
 		{
@@ -98,7 +100,7 @@ namespace dae {
 		}
 	}
 
-	void Renderer::Update(const Timer* pTimer)
+	void HardwareRenderer::Update(const Timer* pTimer)
 	{
 		constexpr float rotateSpeed{ 45.0f };
 
@@ -114,7 +116,7 @@ namespace dae {
 	}
 
 
-	void Renderer::Render() const
+	void HardwareRenderer::Render() const
 	{
 		if (!m_IsInitialized)
 			return;
@@ -144,7 +146,7 @@ namespace dae {
 		m_pSwapChain->Present(0, 0);
 	}
 
-	HRESULT Renderer::InitializeDirectX()
+	HRESULT HardwareRenderer::InitializeDirectX()
 	{
 		///1. Create Device & DeviceContext
 		D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_1;
@@ -284,7 +286,7 @@ namespace dae {
 		return S_OK;
 	}
 
-	void Renderer::CycleSampleStates()
+	void HardwareRenderer::CycleSampleStates()
 	{
 		m_SampleState = static_cast<SampleState>((static_cast<int>(m_SampleState) + 1) % 3);
 
@@ -312,10 +314,8 @@ namespace dae {
 
 		m_pEffectSamplerVariable->SetSampler(0, m_pSamplerState);
 	}
-	void Renderer::CycleCullModes()
+	void HardwareRenderer::CycleCullModes()
 	{
-		m_CullMode = static_cast<CullMode>((static_cast<int>(m_CullMode) + 1) % 3);
-
 		D3D11_RASTERIZER_DESC rasterizerDesc{};
 		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 		rasterizerDesc.FrontCounterClockwise = false;
@@ -327,7 +327,7 @@ namespace dae {
 		rasterizerDesc.MultisampleEnable = false;
 		rasterizerDesc.AntialiasedLineEnable = false;
 
-		switch (m_CullMode)
+		switch (*m_pCullMode)
 		{
 		case Back:
 			rasterizerDesc.CullMode = D3D11_CULL_BACK;
@@ -358,7 +358,7 @@ namespace dae {
 		m_pMeshes[0]->GetRasterizer()->SetRasterizerState(0, m_pRasterizerState);
 	}
 
-	void Renderer::CreateMesh()
+	void HardwareRenderer::CreateMesh()
 	{
 		std::vector<Vertex> vertices{};
 		std::vector<uint32_t> indices{};
@@ -372,8 +372,10 @@ namespace dae {
 		paths.normal = "Resources/vehicle_normal.png";
 		paths.specular = "Resources/vehicle_specular.png";
 		paths.gloss = "Resources/vehicle_gloss.png";
+		auto mesh = new HardwareMesh{ m_pDevice, vertices, indices, paths, m_pGlobalMeshes[0]->pWorldMatrix };
+		m_pGlobalMeshes[0]->pHMesh = mesh;
+		m_pMeshes.push_back(mesh);
 
-		m_pMeshes.push_back(new Mesh{ m_pDevice, vertices, indices, paths});
 		vertices.clear();
 		indices.clear();
 		paths.Clear();
@@ -382,6 +384,8 @@ namespace dae {
 		paths.effect = L"Resources/PosTrans3D.fx";
 		paths.diffuse = "Resources/fireFX_diffuse.png";
 		Utils::ParseOBJ("Resources/fireFX.obj", vertices, indices);
-		m_pMeshes.push_back(new Mesh{ m_pDevice, vertices, indices, paths });
+		mesh = new HardwareMesh{ m_pDevice, vertices, indices, paths, m_pGlobalMeshes[1]->pWorldMatrix };
+		m_pGlobalMeshes[1]->pHMesh = mesh;
+		m_pMeshes.push_back(mesh);
 	}
 }

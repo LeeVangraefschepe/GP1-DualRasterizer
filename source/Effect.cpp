@@ -144,28 +144,28 @@ ID3DX11Effect* Effect::LoadEffect(ID3D11Device* pDevice, const std::wstring& ass
 	return pEffect;
 }
 
-void Effect::SetDiffuseMap(const Texture* pDiffuseTexture) const
+void Effect::SetDiffuseMap(const HardwareTexture* pDiffuseTexture) const
 {
 	if (m_pDiffuseMapVariable)
 	{
 		m_pDiffuseMapVariable->SetResource(pDiffuseTexture->GetSRV());
 	}
 }
-void Effect::SetNormalMap(const Texture* pDiffuseTexture) const
+void Effect::SetNormalMap(const HardwareTexture* pDiffuseTexture) const
 {
 	if (m_pNormalMapVariable)
 	{
 		m_pNormalMapVariable->SetResource(pDiffuseTexture->GetSRV());
 	}
 }
-void Effect::SetSpecularMap(const Texture* pDiffuseTexture) const
+void Effect::SetSpecularMap(const HardwareTexture* pDiffuseTexture) const
 {
 	if (m_pSpecularMapVariable)
 	{
 		m_pSpecularMapVariable->SetResource(pDiffuseTexture->GetSRV());
 	}
 }
-void Effect::SetGlossinessMap(const Texture* pDiffuseTexture) const
+void Effect::SetGlossinessMap(const HardwareTexture* pDiffuseTexture) const
 {
 	if (m_pGlossinessMapVariable)
 	{

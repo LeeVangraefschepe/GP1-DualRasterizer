@@ -2,7 +2,7 @@
 #include <fstream>
 #include "Math.h"
 #include <vector>
-#include "Mesh.h"
+#include "HardwareMesh.h"
 
 namespace dae
 {

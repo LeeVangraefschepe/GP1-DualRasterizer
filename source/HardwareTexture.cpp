@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Texture.h"
+#include "HardwareTexture.h"
 
-Texture::Texture(ID3D11Device* pDevice, const std::string& path)
+HardwareTexture::HardwareTexture(ID3D11Device* pDevice, const std::string& path)
 {
 	//Load texture image
 	SDL_Surface* pSurface = IMG_Load(path.c_str());
@@ -50,18 +50,18 @@ Texture::Texture(ID3D11Device* pDevice, const std::string& path)
 	SDL_FreeSurface(pSurface);
 }
 
-Texture::~Texture()
+HardwareTexture::~HardwareTexture()
 {
 	m_pTexture2D->Release();
 	m_pSRV->Release();
 }
 
-ID3D11Texture2D* Texture::GetTexture2D() const
+ID3D11Texture2D* HardwareTexture::GetTexture2D() const
 {
 	return m_pTexture2D;
 }
 
-ID3D11ShaderResourceView* Texture::GetSRV() const
+ID3D11ShaderResourceView* HardwareTexture::GetSRV() const
 {
 	return m_pSRV;
 }

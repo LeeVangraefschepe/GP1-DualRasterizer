@@ -2,7 +2,7 @@
 #include "pch.h"
 
 class Effect;
-class Texture;
+class HardwareTexture;
 
 namespace dae
 {
@@ -31,17 +31,17 @@ namespace dae
 		}
 	};
 
-	class Mesh final
+	class HardwareMesh final
 	{
 	public:
 
-		explicit Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const MeshDataPaths& paths);
-		~Mesh();
+		explicit HardwareMesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const MeshDataPaths& paths, Matrix* pWorldMatrix);
+		~HardwareMesh();
 
-		Mesh(const Mesh&) = delete;
-		Mesh(Mesh&&) noexcept = delete;
-		Mesh& operator=(const Mesh&) = delete;
-		Mesh& operator=(Mesh&&) noexcept = delete;
+		HardwareMesh(const HardwareMesh&) = delete;
+		HardwareMesh(HardwareMesh&&) noexcept = delete;
+		HardwareMesh& operator=(const HardwareMesh&) = delete;
+		HardwareMesh& operator=(HardwareMesh&&) noexcept = delete;
 
 		void Render(ID3D11DeviceContext* pDeviceContext) const;
 
@@ -49,7 +49,7 @@ namespace dae
 
 		void RotateY(float rotation)
 		{
-			m_RotationMatrix = Matrix::CreateRotationY(rotation) * m_RotationMatrix;
+			*m_pWorldMatrix = Matrix::CreateRotationY(rotation) * *m_pWorldMatrix;
 		}
 
 		ID3DX11EffectSamplerVariable* GetSampleVar() const;
@@ -57,10 +57,10 @@ namespace dae
 	private:
 
 		Effect* m_pEffect{};
-		Texture* m_pDiffuseTexture{};
-		Texture* m_pNormalTexture{};
-		Texture* m_pSpecularTexture{};
-		Texture* m_pGlossinessTexture{};
+		HardwareTexture* m_pDiffuseTexture{};
+		HardwareTexture* m_pNormalTexture{};
+		HardwareTexture* m_pSpecularTexture{};
+		HardwareTexture* m_pGlossinessTexture{};
 		ID3DX11EffectTechnique* m_pTechnique{};
 
 		ID3D11Buffer* m_pVertexBuffer{};
@@ -69,6 +69,6 @@ namespace dae
 
 		uint32_t m_NumIndices{};
 
-		Matrix m_RotationMatrix{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ, Vector3::Zero };
+		Matrix* m_pWorldMatrix;
 	};
 }

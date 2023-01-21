@@ -1,31 +1,32 @@
 #include "pch.h"
-#include "Mesh.h"
+#include "HardwareMesh.h"
 #include "Effect.h"
-#include "Texture.h"
+#include "HardwareTexture.h"
 
 namespace dae
 {
-	Mesh::Mesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const MeshDataPaths& paths)
-		: m_pEffect{ new Effect{ pDevice, paths.effect } }
+	HardwareMesh::HardwareMesh(ID3D11Device* pDevice, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, const MeshDataPaths& paths, Matrix* pWorldMatrix):
+		m_pEffect{ new Effect{ pDevice, paths.effect } },
+		m_pWorldMatrix(pWorldMatrix)
 	{
 		///Create textures
 		
-		m_pDiffuseTexture = new Texture{ pDevice, paths.diffuse };
+		m_pDiffuseTexture = new HardwareTexture{ pDevice, paths.diffuse };
 		m_pEffect->SetDiffuseMap(m_pDiffuseTexture);
 
 		if (!paths.normal.empty())
 		{
-			m_pNormalTexture = new Texture{ pDevice, paths.normal };
+			m_pNormalTexture = new HardwareTexture{ pDevice, paths.normal };
 			m_pEffect->SetNormalMap(m_pNormalTexture);
 		}
 		if (!paths.specular.empty())
 		{
-			m_pSpecularTexture = new Texture{ pDevice, paths.specular };
+			m_pSpecularTexture = new HardwareTexture{ pDevice, paths.specular };
 			m_pEffect->SetSpecularMap(m_pSpecularTexture);
 		}
 		if (!paths.gloss.empty())
 		{
-			m_pGlossinessTexture = new Texture{ pDevice, paths.gloss };
+			m_pGlossinessTexture = new HardwareTexture{ pDevice, paths.gloss };
 			m_pEffect->SetGlossinessMap(m_pGlossinessTexture);
 		}
 
@@ -110,7 +111,7 @@ namespace dae
 		}
 	}
 
-	dae::Mesh::~Mesh()
+	dae::HardwareMesh::~HardwareMesh()
 	{
 		if (m_pIndexBuffer)
 		{
@@ -133,7 +134,7 @@ namespace dae
 		delete m_pSpecularTexture;
 		delete m_pGlossinessTexture;
 	}
-	void Mesh::Render(ID3D11DeviceContext* pDeviceContext) const
+	void HardwareMesh::Render(ID3D11DeviceContext* pDeviceContext) const
 	{
 		//1. Set Primitive Topology
 		pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -159,19 +160,19 @@ namespace dae
 		}
 	}
 
-	void Mesh::SetMatrices(const Matrix& viewProj, const Matrix& invView) const
+	void HardwareMesh::SetMatrices(const Matrix& viewProj, const Matrix& invView) const
 	{
-		m_pEffect->SetMatrixWorld(m_RotationMatrix);
-		m_pEffect->SetMatrixViewProj(m_RotationMatrix * viewProj);
+		m_pEffect->SetMatrixWorld(*m_pWorldMatrix);
+		m_pEffect->SetMatrixViewProj(*m_pWorldMatrix * viewProj);
 		m_pEffect->SetMatrixViewInv(invView);
 	}
 
-	ID3DX11EffectSamplerVariable* Mesh::GetSampleVar() const
+	ID3DX11EffectSamplerVariable* HardwareMesh::GetSampleVar() const
 	{
 		return m_pEffect->GetEffect()->GetVariableByName("gSampler")->AsSampler();
 	}
 
-	ID3DX11EffectRasterizerVariable* Mesh::GetRasterizer() const
+	ID3DX11EffectRasterizerVariable* HardwareMesh::GetRasterizer() const
 	{
 		return m_pEffect->GetEffect()->GetVariableByName("gRasterizerState")->AsRasterizer();
 	}

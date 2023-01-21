@@ -1,6 +1,7 @@
 #pragma once
 #include "Utils.h"
 #include "Camera.h"
+#include "GlobalDefinitions.h"
 
 struct SDL_Window;
 struct SDL_Surface;
@@ -14,18 +15,11 @@ namespace dae
 		Anisotropic
 	};
 
-	enum CullMode
-	{
-		Back,
-		Front,
-		None
-	};
-
-	class Renderer final
+	class HardwareRenderer final
 	{
 	public:
-		Renderer(SDL_Window* pWindow, Camera* pCamera);
-		~Renderer();
+		HardwareRenderer(SDL_Window* pWindow, std::vector<GlobalMesh*>& pGlobalMeshes, Camera* pCamera, CullMode* pCullMode);
+		~HardwareRenderer();
 
 		void ToggleRotation() { m_Rotate = !m_Rotate; }
 		void CycleCullModes();
@@ -34,10 +28,10 @@ namespace dae
 		void ToggleFireMesh() { m_ShowFireMesh = !m_ShowFireMesh; }
 		void CycleSampleStates();
 
-		Renderer(const Renderer&) = delete;
-		Renderer(Renderer&&) noexcept = delete;
-		Renderer& operator=(const Renderer&) = delete;
-		Renderer& operator=(Renderer&&) noexcept = delete;
+		HardwareRenderer(const HardwareRenderer&) = delete;
+		HardwareRenderer(HardwareRenderer&&) noexcept = delete;
+		HardwareRenderer& operator=(const HardwareRenderer&) = delete;
+		HardwareRenderer& operator=(HardwareRenderer&&) noexcept = delete;
 
 		void Update(const Timer* pTimer);
 		void Render() const;
@@ -47,7 +41,7 @@ namespace dae
 
 		int m_Width{};
 		int m_Height{};
-
+		CullMode* m_pCullMode{};
 		bool m_IsInitialized{ false };
 
 		//DIRECTX
@@ -70,14 +64,15 @@ namespace dae
 
 		//Render settings
 		bool m_Rotate{ true };
-		CullMode m_CullMode{ None };
+		
 		bool m_ClearColor{ true };
 
 		//DirectX only
 		bool m_ShowFireMesh{ true };
 		SampleState m_SampleState{ Point };
 
-		std::vector<Mesh*> m_pMeshes{};
+		std::vector<GlobalMesh*>& m_pGlobalMeshes;
+		std::vector<HardwareMesh*> m_pMeshes{};
 		Camera* m_pCamera{};
 
 		void CreateMesh();

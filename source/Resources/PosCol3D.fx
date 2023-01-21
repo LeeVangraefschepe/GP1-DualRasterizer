@@ -107,7 +107,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 	const float exponent = glossColor.r * gShininess;
 
 	const float phongValue = pow(reflectAngle, exponent);
-	const float4 specularColor = gSpecularMap.Sample(gSampler, input.UV) * phongValue;
+	float4 specularColor = gSpecularMap.Sample(gSampler, input.UV) * phongValue;
 
 	//Add each calculation to each other and convert to float4
 	return float4((diffuseColor.rgb * observedArea) + specularColor.rgb + gAmbientColor, 1.f);

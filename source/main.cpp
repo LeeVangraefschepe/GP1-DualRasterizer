@@ -5,7 +5,7 @@
 #endif
 
 #undef main
-#include "Renderer.h"
+#include "HardwareRenderer.h"
 #include "Camera.h"
 
 using namespace dae;
@@ -37,10 +37,20 @@ int main(int argc, char* args[])
 	if (!pWindow)
 		return 1;
 
+	//Create settings
+	const auto pCullmode = new CullMode{ CullMode::None };
+
+	std::vector<GlobalMesh*> pGlobalMeshes{};
+	pGlobalMeshes.push_back(new GlobalMesh{});
+	pGlobalMeshes.push_back(new GlobalMesh{});
+
+
 	//Initialize "framework"
 	const auto pCamera = new Camera{};
 	const auto pTimer = new Timer();
-	const auto pRenderer = new Renderer(pWindow, pCamera);
+	std::vector<GlobalMesh*> pMeshes{};
+
+	const auto pHardwareRenderer = new HardwareRenderer(pWindow,pGlobalMeshes, pCamera, pCullmode);
 
 	pCamera->Initialize(static_cast<float>(width) / static_cast<float>(height), 45.f, { 0,0,-50 });
 
@@ -63,23 +73,24 @@ int main(int argc, char* args[])
 			case SDL_KEYUP:
 				if (e.key.keysym.scancode == SDL_SCANCODE_F2)
 				{
-					pRenderer->ToggleRotation();
+					pHardwareRenderer->ToggleRotation();
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_F3)
 				{
-					pRenderer->ToggleFireMesh();
+					pHardwareRenderer->ToggleFireMesh();
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_F4)
 				{
-					pRenderer->CycleSampleStates();
+					pHardwareRenderer->CycleSampleStates();
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_F9)
 				{
-					pRenderer->CycleCullModes();
+					*pCullmode = static_cast<CullMode>((static_cast<int>(*pCullmode) + 1) % 3);
+					pHardwareRenderer->CycleCullModes();
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_F10)
 				{
-					pRenderer->ToggleClearCollor();
+					pHardwareRenderer->ToggleClearCollor();
 				}
 				if (e.key.keysym.scancode == SDL_SCANCODE_F11)
 				{
@@ -93,11 +104,11 @@ int main(int argc, char* args[])
 		}
 
 		//--------- Update ---------
-		pRenderer->Update(pTimer);
+		pHardwareRenderer->Update(pTimer);
 		pCamera->Update(pTimer);
 
 		//--------- Render ---------
-		pRenderer->Render();
+		pHardwareRenderer->Render();
 
 		//--------- Timer ---------
 		pTimer->Update();
@@ -114,9 +125,15 @@ int main(int argc, char* args[])
 	pTimer->Stop();
 
 	//Shutdown "framework"
-	delete pRenderer;
+	delete pHardwareRenderer;
 	delete pTimer;
 	delete pCamera;
+	delete pCullmode;
+
+	for (const auto pgMesh : pGlobalMeshes)
+	{
+		delete pgMesh;
+	}
 
 	ShutDown(pWindow);
 	return 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include "Texture.h"
+#include "HardwareTexture.h"
 
 class Effect final
 {
@@ -14,10 +14,10 @@ public:
 	Effect& operator=(Effect&&) noexcept = delete;
 
 	static ID3DX11Effect* LoadEffect(ID3D11Device* pDevice, const std::wstring& assetFile);
-	void SetDiffuseMap(const Texture* pDiffuseTexture) const;
-	void SetNormalMap(const Texture* pDiffuseTexture) const;
-	void SetSpecularMap(const Texture* pDiffuseTexture) const;
-	void SetGlossinessMap(const Texture* pDiffuseTexture) const;
+	void SetDiffuseMap(const HardwareTexture* pDiffuseTexture) const;
+	void SetNormalMap(const HardwareTexture* pDiffuseTexture) const;
+	void SetSpecularMap(const HardwareTexture* pDiffuseTexture) const;
+	void SetGlossinessMap(const HardwareTexture* pDiffuseTexture) const;
 
 	ID3DX11Effect* GetEffect() const
 	{
