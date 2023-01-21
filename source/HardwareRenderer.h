@@ -22,10 +22,24 @@ namespace dae
 		~HardwareRenderer();
 
 		void ToggleRotation() { m_Rotate = !m_Rotate; }
-		void CycleCullModes();
+		void UpdateCullMode();
 		void ToggleClearCollor() { m_ClearColor = !m_ClearColor; }
 
-		void ToggleFireMesh() { m_ShowFireMesh = !m_ShowFireMesh; }
+		bool GetRotation() const { return m_Rotate; }
+		bool GetClearColor() const { return m_ClearColor; }
+
+		void ToggleFireMesh()
+		{
+			m_ShowFireMesh = !m_ShowFireMesh;
+			if (m_ShowFireMesh)
+			{
+				std::cout << "ON";
+			}
+			else
+			{
+				std::cout << "OFF";
+			}
+		}
 		void CycleSampleStates();
 
 		HardwareRenderer(const HardwareRenderer&) = delete;

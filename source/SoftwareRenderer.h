@@ -31,11 +31,36 @@ public:
 
 	void Update(Timer* pTimer);
 	void Render();
-	void ToggleDepthBuffer() { m_IsDepthBuffer = !m_IsDepthBuffer; }
-	void ToggleNormal() { m_IsNormal = !m_IsNormal; }
+	void ToggleDepthBuffer()
+	{
+		m_IsDepthBuffer = !m_IsDepthBuffer;
+		if (m_IsDepthBuffer) { std::cout << "ON"; }
+		else { std::cout << "OFF"; }
+	}
+	void ToggleNormal()
+	{
+		m_IsNormal = !m_IsNormal;
+		if (m_IsNormal) { std::cout << "ON"; }
+		else { std::cout << "OFF"; }
+	}
 	void ToggleRotation() { m_IsRotating = !m_IsRotating; }
-	void ToggleBoundingBox() { m_IsBoundingBox = !m_IsBoundingBox; }
-	void ToggleRenderMode() { m_Rendermode = static_cast<RenderMode>((static_cast<int>(m_Rendermode) + 1) % 4); }
+	void ToggleBoundingBox()
+	{
+		m_IsBoundingBox = !m_IsBoundingBox;
+		if (m_IsBoundingBox) { std::cout << "ON"; }
+		else { std::cout << "OFF"; }
+	}
+	void ToggleRenderMode()
+	{
+		m_Rendermode = static_cast<RenderMode>((static_cast<int>(m_Rendermode) + 1) % 4);
+		switch (m_Rendermode)
+		{
+		case ObservedArea: std::cout << "OBSERVED_AREA"; break;
+		case Diffuse: std::cout << "DIFFUSE"; break;
+		case Specular: std::cout << "SPECULAR"; break;
+		case Combined: std::cout << "COMBINED"; break;
+		}
+	}
 	void CycleCullModes();
 	void ToggleClearCollor() { m_ClearColor = !m_ClearColor; }
 

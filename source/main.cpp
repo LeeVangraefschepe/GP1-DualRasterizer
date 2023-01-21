@@ -1,5 +1,10 @@
 #include "pch.h"
 
+#define GREEN   "\033[32m" 
+#define YELLOW  "\033[33m"
+#define MAGENTA "\033[35m"
+#define RESET   "\033[0m"
+
 #if defined(_DEBUG)
 #include "vld.h"
 #endif
@@ -21,24 +26,24 @@ void PrintKeyInfo()
 {
 	SetConsoleTitle("DualRasterizer - Lee Vangraefschepe 2DAEGD15N");
 	std::cout << "\x1B[2J\x1B[H"; //Clear console
-	std::cout << "\033[33m"; //Set yellow
+	std::cout << YELLOW;
 	std::cout << "[Key Bindings - SHARED]\n";
 	std::cout << "  [F1]  Toggle Rasterizer Mode (HARDWARE/SOFTWARE)\n";
 	std::cout << "  [F2]  Toggle Vehicle Rotation (ON/OFF)\n";
 	std::cout << "  [F9]  Cycle CullMode (BACK/FRONT/NONE)\n";
 	std::cout << "  [F10] Toggle Uniform ClearColor (ON/OFF)\n";
 	std::cout << "  [F11] Toggle Print FPS (ON/OFF)\n";
-	std::cout << "\n\033[32m"; //Set green
+	std::cout << "\n" << GREEN;
 	std::cout << "[Key Bindings - HARDWARE]\n";
 	std::cout << "  [F3]  Toggle FireFX (ON/OFF)\n";
 	std::cout << "  [F4]  Cycle Sampler State (POINT/LINEAR/ANISOTROPIC)\n";
-	std::cout << "\n\033[35m"; //Set purple
+	std::cout << "\n" << MAGENTA;
 	std::cout << "[Key Bindings - SOFTWARE]\n";
 	std::cout << "  [F5]  Cycle Shading Mode (COMBINED/OBSERVED_AREA/DIFFUSE/SPECULAR)\n";
 	std::cout << "  [F6]  Toggle NormalMap (ON/OFF)\n";
 	std::cout << "  [F7]  Toggle DepthBuffer Visualization (ON/OFF)\n";
 	std::cout << "  [F8]  Toggle BoundingBox Visualization (ON/OFF)\n";
-	std::cout << "\n\033[0m"; //Set default
+	std::cout << RESET << "\n\n";
 }
 
 int main(int argc, char* args[])
@@ -103,53 +108,111 @@ int main(int argc, char* args[])
 				if (e.key.keysym.scancode == SDL_SCANCODE_F1)
 				{
 					isHardware = !isHardware;
+					std::cout << YELLOW << "**(SHARED) Rasterizer Mode = ";
+					if (isHardware)
+					{
+						std::cout << "HARDWARE";
+					}
+					else
+					{
+						std::cout << "SOFTWARE";
+					}
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F2)
 				{
 					pHardwareRenderer->ToggleRotation();
 					pSoftwareRenderer->ToggleRotation();
+					std::cout << YELLOW << "**(SHARED) Vehicle Rotation ";
+					if (pHardwareRenderer->GetRotation())
+					{
+						std::cout << "ON";
+					}
+					else
+					{
+						std::cout << "OFF";
+					}
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F3)
 				{
+					std::cout << GREEN << "**(HARDWARE) FireFX ";
 					pHardwareRenderer->ToggleFireMesh();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F4)
 				{
+					std::cout << GREEN << "**(HARDWARE) Sampler Filter = ";
 					pHardwareRenderer->CycleSampleStates();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F5)
 				{
+					std::cout << MAGENTA << "**(Software) Shading Mode = ";
 					pSoftwareRenderer->ToggleRenderMode();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F6)
 				{
+					std::cout << MAGENTA << "**(Software) NormalMap ";
 					pSoftwareRenderer->ToggleNormal();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F7)
 				{
+					std::cout << MAGENTA << "**(Software) DepthBuffer Visualization ";
 					pSoftwareRenderer->ToggleDepthBuffer();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F8)
 				{
+					std::cout << MAGENTA << "**(Software) BoundingBox Visualization = ";
 					pSoftwareRenderer->ToggleBoundingBox();
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F9)
 				{
 					*pCullmode = static_cast<CullMode>((static_cast<int>(*pCullmode) + 1) % 3);
-					pHardwareRenderer->CycleCullModes();
+					pHardwareRenderer->UpdateCullMode();
+					std::cout << YELLOW << "**(SHARED) CullMode = ";
+					switch (*pCullmode)
+					{
+					case Back: std::cout << "BACK"; break;
+					case Front:  std::cout << "FRONT"; break;
+					case None:  std::cout << "NONE"; break;
+					}
+					std::cout << "\n" << RESET;
 
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F10)
 				{
 					pHardwareRenderer->ToggleClearCollor();
 					pSoftwareRenderer->ToggleClearCollor();
+					std::cout << YELLOW << "**(SHARED) Uniform ClearColor ";
+					if (pHardwareRenderer->GetClearColor())
+					{
+						std::cout << "ON";
+					}
+					else
+					{
+						std::cout << "OFF";
+					}
+					std::cout << "\n" << RESET;
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F11)
 				{
 					showFps = !showFps;
+					std::cout << YELLOW << "**(SHARED) Print FPS ";
+					if (showFps)
+					{
+						std::cout << "ON";
+					}
+					else
+					{
+						std::cout << "OFF";
+					}
+					std::cout << "\n" << RESET;
 				}
-				//Test for a key
-				//if (e.key.keysym.scancode == SDL_SCANCODE_X)
 				break;
 			default: ;
 			}

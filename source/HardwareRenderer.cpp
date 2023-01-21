@@ -294,15 +294,15 @@ namespace dae {
 		switch (m_SampleState)
 		{
 		case dae::Point:
-			std::cout << "POINT\n";
+			std::cout << "POINT";
 			m_SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 			break;
 		case dae::Linear:
-			std::cout << "LINEAR\n";
+			std::cout << "LINEAR";
 			m_SamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 			break;
 		case dae::Anisotropic:
-			std::cout << "ANISOTROPIC\n";
+			std::cout << "ANISOTROPIC";
 			m_SamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 			break;
 		}
@@ -315,7 +315,7 @@ namespace dae {
 
 		m_pEffectSamplerVariable->SetSampler(0, m_pSamplerState);
 	}
-	void HardwareRenderer::CycleCullModes()
+	void HardwareRenderer::UpdateCullMode()
 	{
 		D3D11_RASTERIZER_DESC rasterizerDesc{};
 		rasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -332,15 +332,12 @@ namespace dae {
 		{
 		case Back:
 			rasterizerDesc.CullMode = D3D11_CULL_BACK;
-			std::cout << "Set to back cull mode\n";
 			break;
 		case Front:
 			rasterizerDesc.CullMode = D3D11_CULL_FRONT;
-			std::cout << "Set to front cull mode\n";
 			break;
 		case None:
 			rasterizerDesc.CullMode = D3D11_CULL_NONE;
-			std::cout << "Set to none cull mode\n";
 			break;
 		}
 
