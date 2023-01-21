@@ -122,11 +122,12 @@ namespace dae {
 			return;
 
 		//Clear window for next frame
-		ColorRGB clearColor{ 0.39f, 0.59f, 0.93f };
+		ColorRGB clearColor{ 0.39f, 0.59f, 0.93f, 1.f };
 		if (m_ClearColor)
 		{
-			clearColor = {0.1f,0.1f,0.1f};
+			clearColor = { 0.1f, 0.1f, 0.1f, 1.f };
 		}
+
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, &clearColor.r);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -364,7 +365,7 @@ namespace dae {
 		std::vector<uint32_t> indices{};
 
 		//Load main mesh
-		Utils::ParseOBJ("Resources/vehicle.obj", vertices, indices);
+		Utils::HWParseOBJ("Resources/vehicle.obj", vertices, indices);
 
 		MeshDataPaths paths;
 		paths.effect = L"Resources/PosCol3D.fx";
@@ -383,7 +384,7 @@ namespace dae {
 		//Load fire mesh
 		paths.effect = L"Resources/PosTrans3D.fx";
 		paths.diffuse = "Resources/fireFX_diffuse.png";
-		Utils::ParseOBJ("Resources/fireFX.obj", vertices, indices);
+		Utils::HWParseOBJ("Resources/fireFX.obj", vertices, indices);
 		mesh = new HardwareMesh{ m_pDevice, vertices, indices, paths, m_pGlobalMeshes[1]->pWorldMatrix };
 		m_pGlobalMeshes[1]->pHMesh = mesh;
 		m_pMeshes.push_back(mesh);

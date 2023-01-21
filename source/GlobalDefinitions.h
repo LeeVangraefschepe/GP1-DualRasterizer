@@ -1,23 +1,25 @@
 #pragma once
-#include "HardwareMesh.h"
-struct SoftwareMesh;
-
-using namespace dae;
-
-enum CullMode
+namespace dae
 {
-	Back,
-	Front,
-	None
-};
+	class HardwareMesh;
+	struct SoftwareMesh;
 
-struct GlobalMesh final
-{
-	~GlobalMesh()
+	enum CullMode
 	{
-		delete pWorldMatrix;
-	}
-	HardwareMesh* pHMesh{nullptr};
-	SoftwareMesh* pSMesh{nullptr};
-	Matrix* pWorldMatrix = new Matrix{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ, Vector3::Zero };
-};
+		Back,
+		Front,
+		None
+	};
+
+	struct GlobalMesh final
+	{
+		~GlobalMesh()
+		{
+			delete pWorldMatrix;
+		}
+
+		HardwareMesh* pHMesh{ nullptr };
+		SoftwareMesh* pSMesh{ nullptr };
+		Matrix* pWorldMatrix = new dae::Matrix{ dae::Vector3::UnitX, dae::Vector3::UnitY, dae::Vector3::UnitZ, dae::Vector3::Zero };
+	};
+}

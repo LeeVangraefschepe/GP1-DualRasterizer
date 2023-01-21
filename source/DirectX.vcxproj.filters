@@ -8,9 +8,14 @@
     <Filter Include="Misc">
       <UniqueIdentifier>{72056cb6-72a2-42b7-b05e-376f1ddd957e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hardware">
+      <UniqueIdentifier>{db403193-fc1d-443f-80e1-07f671753af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Software">
+      <UniqueIdentifier>{2ed8f447-c617-4a2a-b8ed-3733ddf16cf8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HardwareRenderer.h" />
     <ClInclude Include="Vector3.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -36,16 +41,38 @@
     <ClInclude Include="ColorRGB.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="HardwareMesh.h" />
-    <ClInclude Include="Effect.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="HardwareTexture.h" />
-    <ClInclude Include="Utils.h" />
     <ClInclude Include="GlobalDefinitions.h" />
+    <ClInclude Include="Effect.h">
+      <Filter>Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareMesh.h">
+      <Filter>Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareRenderer.h">
+      <Filter>Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="HardwareTexture.h">
+      <Filter>Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="HWUtils.h">
+      <Filter>Hardware</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>Software</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftwareRenderer.h">
+      <Filter>Software</Filter>
+    </ClInclude>
+    <ClInclude Include="SWUtils.h">
+      <Filter>Software</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftwareTexture.h">
+      <Filter>Software</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="HardwareRenderer.cpp" />
     <ClCompile Include="Vector3.cpp">
       <Filter>Math</Filter>
     </ClCompile>
@@ -62,8 +89,20 @@
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="HardwareMesh.cpp" />
-    <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="HardwareTexture.cpp" />
+    <ClCompile Include="Effect.cpp">
+      <Filter>Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="HardwareMesh.cpp">
+      <Filter>Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="HardwareRenderer.cpp">
+      <Filter>Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="HardwareTexture.cpp">
+      <Filter>Hardware</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftwareRenderer.cpp">
+      <Filter>Software</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

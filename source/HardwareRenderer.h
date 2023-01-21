@@ -1,5 +1,5 @@
 #pragma once
-#include "Utils.h"
+#include "HWUtils.h"
 #include "Camera.h"
 #include "GlobalDefinitions.h"
 

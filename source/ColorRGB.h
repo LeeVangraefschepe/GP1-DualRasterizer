@@ -8,6 +8,7 @@ namespace dae
 		float r{};
 		float g{};
 		float b{};
+		float a{};
 
 		void MaxToOne()
 		{
