@@ -80,7 +80,7 @@ private:
 	void VertexTransformationWorldToNDCNew(Mesh& mesh) const;
 
 	static bool IsVerticesInFrustrum(const Vertex_Out& vertex);
-	void PixelShading(const Vertex_Out& v);
+	void PixelShading(const Vertex_Out& v) const;
 	void CalculateSpecular(const Vector3& sampledNormal, const Vector3& lightDirection, const Vertex_Out& v, const float shininess, ColorRGB& output) const;
 
 	//Draw traingles by using the index

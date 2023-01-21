@@ -63,7 +63,15 @@ void SoftwareRenderer::Render()
 {
 	//@START
 	//Clears background
-	SDL_FillRect(m_pBackBuffer, nullptr, SDL_MapRGB(m_pBackBuffer->format, 100, 100, 100));
+	if (m_ClearColor)
+	{
+		SDL_FillRect(m_pBackBuffer, nullptr, SDL_MapRGB(m_pBackBuffer->format, 26, 26, 26));
+	}
+	else
+	{
+		SDL_FillRect(m_pBackBuffer, nullptr, SDL_MapRGB(m_pBackBuffer->format, 100, 100, 100));
+	}
+	
 	//Lock BackBuffer
 	SDL_LockSurface(m_pBackBuffer);
 
@@ -205,7 +213,7 @@ bool SoftwareRenderer::IsVerticesInFrustrum(const Vertex_Out& vertex)
 	return true;
 }
 
-void SoftwareRenderer::PixelShading(const Vertex_Out& v)
+void SoftwareRenderer::PixelShading(const Vertex_Out& v) const
 {
 	const int pixelIndex = static_cast<int>(v.position.x) + (static_cast<int>(v.position.y) * m_Width);
 	ColorRGB finalColor{ colors::White };
@@ -260,8 +268,6 @@ void SoftwareRenderer::PixelShading(const Vertex_Out& v)
 			finalColor = (m_pTexture->Sample(v.uv) * kd / PI) * lightIntensity * observedArea + specularColor;
 		}
 		break;
-		default:
-			break;
 		}
 
 		finalColor += ambientColor;
@@ -337,29 +343,22 @@ void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh)
 				continue;
 			}
 
-			ColorRGB finalColor{ .0f, .0f, .0f };
-
 			const Vector2 pointToSide = Vector2{ static_cast<float>(px), static_cast<float>(py) };
 			const Vector2 pointV0 = pointToSide - m_VerticesScreenSpace[vertexIndex0];
 			const Vector2 pointV1 = pointToSide - m_VerticesScreenSpace[vertexIndex1];
 			const Vector2 pointV2 = pointToSide - m_VerticesScreenSpace[vertexIndex2];
-
-			//Check if pixel is in triangle
 			const float edge0 = Vector2::Cross(edgeV0V1, pointV0);
-			if (edge0 <= 0)
-			{
-				continue;
-			}
 			const float edge1 = Vector2::Cross(edgeV1V2, pointV1);
-			if (edge1 <= 0)
-			{
-				continue;
-			}
 			const float edge2 = Vector2::Cross(edgeV2V0, pointV2);
-			if (edge2 <= 0)
+
+			//Culling
+			const bool isFront{ edge0 >= 0 && edge1 >= 0 && edge2 >= 0 };
+			const bool isBack{ edge0 <= 0 && edge1 <= 0 && edge2 <= 0 };
+			if ((*m_pCullMode == Back && !isFront) || (*m_pCullMode == Front && !isBack) || (*m_pCullMode == None && !isBack && !isFront))
 			{
 				continue;
 			}
+
 
 			//Calculate the barycentric weight
 			const float weightV0 = edge1 / fullTriangleArea;

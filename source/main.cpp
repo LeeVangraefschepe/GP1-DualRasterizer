@@ -63,7 +63,7 @@ int main(int argc, char* args[])
 		return 1;
 
 	//Create settings
-	const auto pCullmode = new CullMode{ CullMode::None };
+	const auto pCullmode = new CullMode{ Back };
 	bool isHardware{ true };
 	bool showFps{};
 
@@ -142,7 +142,7 @@ int main(int argc, char* args[])
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F10)
 				{
 					pHardwareRenderer->ToggleClearCollor();
-
+					pSoftwareRenderer->ToggleClearCollor();
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F11)
 				{
