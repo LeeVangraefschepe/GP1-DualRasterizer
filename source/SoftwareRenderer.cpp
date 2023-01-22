@@ -44,24 +44,20 @@ SoftwareRenderer::~SoftwareRenderer()
 	delete m_pTextureSpecular;
 }
 
-void SoftwareRenderer::Update(Timer* pTimer)
+void SoftwareRenderer::Update(const Timer* pTimer) const
 {
 	if (m_IsRotating)
 	{
-		for (Mesh& mesh : m_MeshesWorld)
+		for (const auto pgMesh : m_pGlobalMeshes)
 		{
-			for (const auto pgMesh : m_pGlobalMeshes)
-			{
-				constexpr float rotationSpeed = 1.f;
-				*pgMesh->pWorldMatrix = Matrix::CreateRotationY((rotationSpeed * pTimer->GetElapsed())) * *pgMesh->pWorldMatrix;
-			}
+			constexpr float rotationSpeed = 1.f;
+			*pgMesh->pWorldMatrix = Matrix::CreateRotationY((rotationSpeed * pTimer->GetElapsed())) * *pgMesh->pWorldMatrix;
 		}
 	}
 }
 
 void SoftwareRenderer::Render()
 {
-	//@START
 	//Clears background
 	if (m_ClearColor)
 	{
@@ -95,7 +91,7 @@ void SoftwareRenderer::Render()
 
 		for (size_t i = 0; i < m_VerticesCount; i++)
 		{
-			Vector2 temp{};
+			Vector2 temp;
 			temp.x = (mesh.vertices_out[i].position.x + 1) / 2 * static_cast<float>(m_Width);
 			temp.y = (1 - mesh.vertices_out[i].position.y) / 2 * static_cast<float>(m_Height);
 			m_VerticesScreenSpace[i] = temp;
@@ -122,16 +118,11 @@ void SoftwareRenderer::Render()
 		break;
 		}
 	}
-	//@END
+
 	//Update SDL Surface
 	SDL_UnlockSurface(m_pBackBuffer);
-	SDL_BlitSurface(m_pBackBuffer, 0, m_pFrontBuffer, 0);
+	SDL_BlitSurface(m_pBackBuffer, nullptr, m_pFrontBuffer, nullptr);
 	SDL_UpdateWindowSurface(m_pWindow);
-}
-
-void SoftwareRenderer::CycleCullModes()
-{
-
 }
 
 size_t SoftwareRenderer::FindReserveSize() const
@@ -294,7 +285,7 @@ void SoftwareRenderer::CalculateSpecular(const Vector3& sampledNormal, const Vec
 	output = m_pTextureSpecular->Sample(v.uv) * phong;
 }
 
-void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh)
+void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh) const
 {
 	//Predefine indexes
 	const uint32_t vertexIndex0 = i;
@@ -423,6 +414,7 @@ void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh)
 				};
 				pixelInfo.uv = pixelUV;
 
+				//Calculate normal
 				pixelInfo.normal =
 				{
 					((((mesh.vertices_out[vertexIndex0].normal / mesh.vertices_out[vertexIndex0].position.w) * weightV0) +
@@ -430,6 +422,7 @@ void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh)
 					((mesh.vertices_out[vertexIndex2].normal / mesh.vertices_out[vertexIndex2].position.w) * weightV2)) * interpolatedPixelDepth).Normalized()
 				};
 
+				//Calculate tangent
 				pixelInfo.tangent =
 				{
 					((((mesh.vertices_out[vertexIndex0].tangent / mesh.vertices_out[vertexIndex0].position.w) * weightV0) +
@@ -437,6 +430,7 @@ void SoftwareRenderer::DrawTriangle(int i, bool swapVertices, const Mesh& mesh)
 					((mesh.vertices_out[vertexIndex2].tangent / mesh.vertices_out[vertexIndex2].position.w) * weightV2)) * interpolatedPixelDepth).Normalized()
 				};
 
+				//Calculate viewDirection
 				pixelInfo.viewDirection =
 				{
 					((((mesh.vertices_out[vertexIndex0].viewDirection / mesh.vertices_out[vertexIndex0].position.w) * weightV0) +

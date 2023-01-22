@@ -2,7 +2,6 @@
 #include <SDL_keyboard.h>
 #include <SDL_mouse.h>
 #include <chrono>
-#include <iostream>
 
 #include "Math.h"
 #include "Timer.h"
@@ -79,48 +78,59 @@ namespace dae
 
 		void Update(const Timer* pTimer)
 		{
-			const float deltaTime = pTimer->GetElapsed();
-
-			constexpr float cameraSpeed{ 100.f };
+			float deltaTime = pTimer->GetElapsed();
+			constexpr float cameraSpeed{ 10.f };
 
 			//Keyboard Input
 			const uint8_t* pKeyboardState = SDL_GetKeyboardState(nullptr);
 
-
 			//Mouse Input
 			int mouseX{}, mouseY{};
-			const uint32_t mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY); //1 left 4 right
+			const uint32_t mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
 
-			//Process data
-			if (mouseState == SDL_BUTTON_LEFT)
+			//Keyboard stuff
+			const bool boostedSpeed = pKeyboardState[SDL_SCANCODE_LSHIFT] || pKeyboardState[SDL_SCANCODE_RSHIFT];
+			float boostAmount{ 1.5f };
+			if (boostedSpeed == false)
 			{
-				origin.z -= mouseY * deltaTime;
+				boostAmount = 1.f;
 			}
-			if (mouseState == SDL_BUTTON_RIGHT)
-			{
-				origin.y -= mouseY * deltaTime;
-			}
-
 			if (pKeyboardState[SDL_SCANCODE_W] || pKeyboardState[SDL_SCANCODE_UP])
 			{
-				origin += cameraSpeed * deltaTime * forward;
+				origin += cameraSpeed * deltaTime * forward * boostAmount;
 			}
 			if (pKeyboardState[SDL_SCANCODE_S] || pKeyboardState[SDL_SCANCODE_DOWN])
 			{
-				origin -= cameraSpeed * deltaTime * forward;
+				origin -= cameraSpeed * deltaTime * forward * boostAmount;
 			}
 			if (pKeyboardState[SDL_SCANCODE_A] || pKeyboardState[SDL_SCANCODE_LEFT])
 			{
-				origin -= cameraSpeed * deltaTime * right;
+				origin -= cameraSpeed * deltaTime * right * boostAmount;
 			}
 			if (pKeyboardState[SDL_SCANCODE_D] || pKeyboardState[SDL_SCANCODE_RIGHT])
 			{
-				origin += cameraSpeed * deltaTime * right;
+				origin += cameraSpeed * deltaTime * right * boostAmount;
 			}
-			if (mouseState == 4 || mouseState == 1)
+
+			//Delta time too small for calculations
+			if (deltaTime < 0.01f)
 			{
-				totalPitch -= cameraSpeed * TO_RADIANS * mouseY * deltaTime;
-				totalYaw -= cameraSpeed * TO_RADIANS * mouseX * deltaTime;
+				deltaTime = 0.01f;
+			}
+			//Mouse stuff
+			if (mouseState == SDL_BUTTON_LEFT)
+			{
+				origin -= mouseY * deltaTime * forward;
+				totalYaw -= cameraSpeed * deltaTime * mouseX * TO_RADIANS;
+			}
+			if (mouseState == SDL_BUTTON_RIGHT || mouseState == SDL_BUTTON_RMASK)
+			{
+				totalYaw -= cameraSpeed * deltaTime * mouseX * TO_RADIANS;
+				totalPitch -= cameraSpeed * deltaTime * mouseY * TO_RADIANS;
+			}
+			if (mouseState == SDL_BUTTON_X2)
+			{
+				origin.y -= mouseY * cameraSpeed * deltaTime;
 			}
 
 			forward = Matrix::CreateRotation(totalPitch, totalYaw, 0.f).TransformVector(Vector3::UnitZ);

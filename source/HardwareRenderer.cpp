@@ -100,7 +100,7 @@ namespace dae {
 		}
 	}
 
-	void HardwareRenderer::Update(const Timer* pTimer)
+	void HardwareRenderer::Update(const Timer* pTimer) const
 	{
 		constexpr float rotateSpeed{ 45.0f };
 
@@ -157,7 +157,7 @@ namespace dae {
 #endif
 
 		IDXGIFactory1* pFactory = nullptr;
-		HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&pFactory);
+		HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&pFactory));
 
 		HRESULT result{};
 
@@ -365,7 +365,7 @@ namespace dae {
 		Utils::HWParseOBJ("Resources/vehicle.obj", vertices, indices);
 
 		MeshDataPaths paths;
-		paths.effect = L"Resources/PosCol3D.fx";
+		paths.effect = L"Resources/Vehicle.fx";
 		paths.diffuse = "Resources/vehicle_diffuse.png";
 		paths.normal = "Resources/vehicle_normal.png";
 		paths.specular = "Resources/vehicle_specular.png";
@@ -379,7 +379,7 @@ namespace dae {
 		paths.Clear();
 
 		//Load fire mesh
-		paths.effect = L"Resources/PosTrans3D.fx";
+		paths.effect = L"Resources/Fire.fx";
 		paths.diffuse = "Resources/fireFX_diffuse.png";
 		Utils::HWParseOBJ("Resources/fireFX.obj", vertices, indices);
 		mesh = new HardwareMesh{ m_pDevice, vertices, indices, paths, m_pGlobalMeshes[1]->pWorldMatrix };

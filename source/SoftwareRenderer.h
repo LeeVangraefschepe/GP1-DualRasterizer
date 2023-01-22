@@ -29,7 +29,7 @@ public:
 	SoftwareRenderer& operator=(const SoftwareRenderer&) = delete;
 	SoftwareRenderer& operator=(SoftwareRenderer&&) noexcept = delete;
 
-	void Update(Timer* pTimer);
+	void Update(const Timer* pTimer) const;
 	void Render();
 	void ToggleDepthBuffer()
 	{
@@ -61,7 +61,6 @@ public:
 		case Combined: std::cout << "COMBINED"; break;
 		}
 	}
-	void CycleCullModes();
 	void ToggleClearCollor() { m_ClearColor = !m_ClearColor; }
 
 	bool SaveBufferToImage() const;
@@ -106,10 +105,10 @@ private:
 
 	static bool IsVerticesInFrustrum(const Vertex_Out& vertex);
 	void PixelShading(const Vertex_Out& v) const;
-	void CalculateSpecular(const Vector3& sampledNormal, const Vector3& lightDirection, const Vertex_Out& v, const float shininess, ColorRGB& output) const;
+	void CalculateSpecular(const Vector3& sampledNormal, const Vector3& lightDirection, const Vertex_Out& v, float shininess, ColorRGB& output) const;
 
 	//Draw traingles by using the index
-	void DrawTriangle(int i, bool swapVertices, const Mesh& mesh);
+	void DrawTriangle(int i, bool swapVertices, const Mesh& mesh) const;
 
 	//Find size to reserve
 	size_t FindReserveSize() const;

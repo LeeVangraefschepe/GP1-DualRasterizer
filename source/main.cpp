@@ -14,6 +14,19 @@
 #include "SoftwareRenderer.h"
 #include "Camera.h"
 
+
+//Force color codes to work
+#include <Windows.h>
+void enableColors()
+{
+	DWORD consoleMode;
+	const HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (GetConsoleMode(outputHandle, &consoleMode))
+	{
+		SetConsoleMode(outputHandle, consoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+	}
+}
+
 using namespace dae;
 
 void ShutDown(SDL_Window* pWindow)
@@ -24,6 +37,7 @@ void ShutDown(SDL_Window* pWindow)
 
 void PrintKeyInfo()
 {
+	enableColors();
 	SetConsoleTitle("DualRasterizer - Lee Vangraefschepe 2DAEGD15N");
 	std::cout << "\x1B[2J\x1B[H"; //Clear console
 	std::cout << YELLOW;
@@ -182,7 +196,6 @@ int main(int argc, char* args[])
 					case None:  std::cout << "NONE"; break;
 					}
 					std::cout << "\n" << RESET;
-
 				}
 				else if (e.key.keysym.scancode == SDL_SCANCODE_F10)
 				{

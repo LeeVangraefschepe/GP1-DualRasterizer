@@ -7,7 +7,7 @@ HardwareTexture::HardwareTexture(ID3D11Device* pDevice, const std::string& path)
 	SDL_Surface* pSurface = IMG_Load(path.c_str());
 
 	//Set texture settings for directX
-	const DXGI_FORMAT format{ DXGI_FORMAT_R8G8B8A8_UNORM };
+	constexpr DXGI_FORMAT format{ DXGI_FORMAT_R8G8B8A8_UNORM };
 	D3D11_TEXTURE2D_DESC desc{};
 	desc.Width = pSurface->w;
 	desc.Height = pSurface->h;

@@ -47,7 +47,7 @@ namespace dae
 
 		void SetMatrices(const Matrix& viewProj, const Matrix& invView) const;
 
-		void RotateY(float rotation)
+		void RotateY(float rotation) const
 		{
 			*m_pWorldMatrix = Matrix::CreateRotationY(rotation) * *m_pWorldMatrix;
 		}

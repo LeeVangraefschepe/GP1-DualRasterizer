@@ -47,7 +47,7 @@ namespace dae
 		HardwareRenderer& operator=(const HardwareRenderer&) = delete;
 		HardwareRenderer& operator=(HardwareRenderer&&) noexcept = delete;
 
-		void Update(const Timer* pTimer);
+		void Update(const Timer* pTimer) const;
 		void Render() const;
 
 	private:
